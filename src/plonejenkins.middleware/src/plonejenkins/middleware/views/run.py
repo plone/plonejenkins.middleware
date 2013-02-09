@@ -18,6 +18,8 @@ runPushTests = Service(name='Run push tests', path='/run/pullrequest',
                     description="Run the core-dev buildout with a pull request")
 
 
+jenkins_jobs = ['plone-4.3', 'plone-4.2']
+
 @runCoreTests.post()
 @validatetoken
 def runFunctionCoreTests(request):
@@ -25,6 +27,20 @@ def runFunctionCoreTests(request):
     When we are called by GH we want to run the jenkins core-dev builds
     """
     payload = request.json_body
+
+    # We need to run the core-dev tests
+    jenkins_username = request.registry.settings['jenkins_username']
+    jenkins_password = request.registry.settings['jenkins_password']
+    jenkins_url = request.registry.settings['jenkins_url']
+
+    for job in jenkins_jobs:
+        call_url = 'https://%s:%s@%s/job/%s/build' % (
+            jenkins_username,
+            jenkins_password,
+            jenkins_url,
+            job,
+        )
+    urllib2.urlopen(call_url)
 
 
 @runPushTests.post()
