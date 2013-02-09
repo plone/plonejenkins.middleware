@@ -42,7 +42,7 @@ class Source():
 class PloneCoreBuildout(object):
     PLONE_COREDEV_LOCATION = "git@github.com:plone/buildout.coredev.git"
 
-    def __init__(self, core_version):
+    def __init__(self, core_version=None):
         self.core_version = core_version
         self.location = mkdtemp()
         self.repo = self._clone()
