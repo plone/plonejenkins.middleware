@@ -2,6 +2,7 @@
 from cornice import Service
 from plonejenkins.middleware.security import validatetoken
 from plonejenkins.middleware.utils import add_log, jenkins_job
+from plonejenkins.middleware.buildout import PloneCoreBuildout
 
 import uuid
 import os
@@ -60,21 +61,32 @@ def runFunctionPushTests(request):
     pull_id = payload['number']
 
     github = request.registry.settings['github']
+    package_name = ''
+    merge_to_branch = ''
     repository = github.get_repo(repo_name)
     pull = repository.get_pull(pull_id)
-
-    # Is this the first time we've seen this pull request?
-    #   Create Jenkins job
-    #   Post comment with Jenkins url
+    
+    # Check local db for registered jobs
+    #   Is this the first time we've seen this pull request?
+    # Which branches use this branch?
+    for branch in COREDEV_BRANCHES_TO_CHECK:
+        core_buildout = PloneCoreBuildout(branch)
+        if core_buildout.get_package_branch(package_name) == merge_to_branch:
+            # Create a Jenkins job for each branch
+            pass
+    #   Post comment with Jenkins url(s)
+    #   
     #
     # Are there changes?
-    #   Run Jenkins job
+    #   Run Jenkins job(s)
     #
     # Has the pull request been closed/merged?
-    #   Delete the Jenkins job
+    #   Delete the Jenkins job(s)
+    #   Delete the db entry 
     #
     # Check all committers for Plone contributor rights
-
+    committers = dict([(a.committer.id, a.committer) for a in pull.get_commits()]).values()
+    # import pdb; pdb.set_trace( )
     # pull.create_issue_comment('Domo arigato.')
 
 
