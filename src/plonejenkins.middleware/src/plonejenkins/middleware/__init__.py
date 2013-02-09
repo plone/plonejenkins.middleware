@@ -5,7 +5,8 @@ from security import RequestWithAttributes
 from plonejenkins.middleware.db import ReposDB
 
 from plonejenkins.middleware.plonegithub import PloneGithub
-from jenkins import Jenkins
+from plonejenkins.middleware.jenkins import Jenkins
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
