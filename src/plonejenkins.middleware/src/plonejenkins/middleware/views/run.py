@@ -59,7 +59,19 @@ def runFunctionPushTests(request):
 
     github = request.registry.settings['github']
     repository = github.get_repo(repo_name)
-    pull = repo.get_pull(pull_id)
+    pull = repository.get_pull(pull_id)
+
+    # Is this the first time we've seen this pull request?
+    #   Create Jenkins job
+    #   Post comment with Jenkins url
+    #
+    # Are there changes?
+    #   Run Jenkins job
+    #
+    # Has the pull request been closed/merged?
+    #   Delete the Jenkins job
+    #
+    # Check all committers for Plone contributor rights
 
     # pull.create_issue_comment('Domo arigato.')
 
