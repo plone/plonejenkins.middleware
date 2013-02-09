@@ -36,7 +36,9 @@ setup(name='plonejenkins.middleware',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'cornice'
+          'cornice',
+          'configparser',
+          'gitpython'
       ],
       entry_points="""\
       [paste.app_factory]
