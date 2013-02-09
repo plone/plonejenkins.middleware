@@ -61,11 +61,11 @@ def runFunctionPushTests(request):
     pull_id = payload['number']
 
     github = request.registry.settings['github']
-    package_name = ''
-    merge_to_branch = ''
+    package_name = payload['base']['name']
+    merge_to_branch = payload['base']['ref']
     repository = github.get_repo(repo_name)
     pull = repository.get_pull(pull_id)
-    
+
     # Check local db for registered jobs
     #   Is this the first time we've seen this pull request?
     # Which branches use this branch?
