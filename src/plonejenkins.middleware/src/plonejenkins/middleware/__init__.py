@@ -4,7 +4,7 @@ from security import RequestWithAttributes
 
 from plonejenkins.middleware.db import ReposDB
 
-from github import Github
+from plonejenkins.middleware.plonegithub import PloneGithub
 from jenkins import Jenkins
 
 def main(global_config, **settings):
@@ -19,7 +19,7 @@ def main(global_config, **settings):
     config.registry.settings['api_key'] = settings['api_key']
 
     config.registry.settings['jenkins'] = Jenkins(settings['jenkins_url'], settings['jenkins_username'], settings['jenkins_password'])
-    config.registry.settings['github'] = Github(settings['github_token'])
+    config.registry.settings['github'] = PloneGithub(settings['github_token'])
 
     config.registry.settings['core'] = ReposDB(settings['core_repos_db'])
 
