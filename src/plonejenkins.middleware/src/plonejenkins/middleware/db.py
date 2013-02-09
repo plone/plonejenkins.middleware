@@ -8,10 +8,12 @@ class ReposDB(object):
     def __init__(self, filename):
         self._filename = filename
         f = open(filename, 'w+')
-        self._db = json.loads(f.read())
-        f.close()
-        if self._db is None:
+        content = f.read()
+        if content != '':
+            self._db = json.loads(f.read())
+        else:
             self._db = {}
+        f.close()
 
     def save(self):
         f = open(self._filename, 'w+')

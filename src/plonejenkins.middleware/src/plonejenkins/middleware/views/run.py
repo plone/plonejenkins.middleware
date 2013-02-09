@@ -40,6 +40,9 @@ def runFunctionCoreTests(request):
             jenkins_url,
             job,
         )
+
+    # Going to run the core-dev tests
+    
     urllib2.urlopen(call_url)
 
 
