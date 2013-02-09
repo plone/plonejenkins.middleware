@@ -21,6 +21,8 @@ runPushTests = Service(name='Run push tests', path='/run/pullrequest',
 
 jenkins_jobs = ['plone-4.3', 'plone-4.2']
 
+COREDEV_BRANCHES_TO_CHECK = ['4.2', '4.3']
+
 
 @runCoreTests.post()
 @validatetoken
