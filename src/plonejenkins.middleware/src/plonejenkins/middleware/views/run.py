@@ -55,6 +55,14 @@ def runFunctionPushTests(request):
     When we are called by GH we want to run the jenkins core-dev builds
     """
     payload = request.json_body
+    repo_name = payload['repository']['full_name']
+    pull_id = payload['number']
+
+    github = request.registry.settings['github']
+    repository = github.get_repo(repo_name)
+    pull = repo.get_pull(pull_id)
+
+    # pull.create_issue_comment('Domo arigato.')
 
 
 
