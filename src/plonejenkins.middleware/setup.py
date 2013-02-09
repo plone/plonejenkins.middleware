@@ -39,7 +39,8 @@ setup(name='plonejenkins.middleware',
           'cornice',
           'configparser',
           'gitpython',
-          'python-dateutil'
+          'python-dateutil',
+          'PyGithub'
       ],
       entry_points="""\
       [paste.app_factory]
