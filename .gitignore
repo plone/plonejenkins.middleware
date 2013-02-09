@@ -5,3 +5,5 @@ parts
 .DS_Store
 develop-eggs
 *.egg-info
+/.mr.developer.cfg
+/.installed.cfg
