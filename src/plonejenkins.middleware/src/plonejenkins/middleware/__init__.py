@@ -20,7 +20,8 @@ def main(global_config, **settings):
     config.registry.settings['api_key'] = settings['api_key']
 
     config.registry.settings['jenkins'] = Jenkins(settings['jenkins_url'], settings['jenkins_username'], settings['jenkins_password'])
-    config.registry.settings['github'] = PloneGithub(settings['github_token'])
+
+    config.registry.settings['github'] = PloneGithub(settings['github_user'], settings['github_password'])
 
     config.registry.settings['core'] = ReposDB(settings['core_repos_db'])
 
