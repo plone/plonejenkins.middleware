@@ -1,15 +1,16 @@
 # -*- encoding: utf-8 -*-
 from cornice import Service
 from plonejenkins.middleware.security import validatetoken
-from plonejenkins.middleware.utils import add_log
+from plonejenkins.middleware.utils import add_log, jenkins_job
 
 import uuid
-import os, shutil
+import os
+import shutil
 import zipfile
+import urllib2
+import lxml
 
 from datetime import datetime
-from dateutil import parser
-
 
 runCoreTests = Service(name='Run core tests', path='/run/corecommit',
                     description="Run the core-dev buildout")
@@ -20,6 +21,7 @@ runPushTests = Service(name='Run push tests', path='/run/pullrequest',
 
 jenkins_jobs = ['plone-4.3', 'plone-4.2']
 
+
 @runCoreTests.post()
 @validatetoken
 def runFunctionCoreTests(request):
@@ -28,22 +30,22 @@ def runFunctionCoreTests(request):
     """
     payload = request.json_body
 
+    # Going to run the core-dev tests
+    for commit in payload['commits']:
+        who = commit['name'] + '<' + commit['author'] + '>'
+    message = 'Commit trigger on core-dev'
+    add_log(request, who, message)
+
     # We need to run the core-dev tests
-    jenkins_username = request.registry.settings['jenkins_username']
-    jenkins_password = request.registry.settings['jenkins_password']
-    jenkins_url = request.registry.settings['jenkins_url']
+    jenkins = request.registry.settings['jenkins']
+    # with a callback with the last commit hash
+    # we should store all of them but right now is ok
+    last_commit = payload['commits'][0]['id']
+    url = request.registry.settings['callback_url'] + 'corecommit?commit_hash=' + last_commit
 
     for job in jenkins_jobs:
-        call_url = 'https://%s:%s@%s/job/%s/build' % (
-            jenkins_username,
-            jenkins_password,
-            jenkins_url,
-            job,
-        )
 
-    # Going to run the core-dev tests
-    
-    urllib2.urlopen(call_url)
+        jenkins_job(request, job, url)
 
 
 @runPushTests.post()

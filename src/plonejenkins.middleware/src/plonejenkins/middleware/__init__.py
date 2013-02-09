@@ -4,6 +4,8 @@ from security import RequestWithAttributes
 
 from plonejenkins.middleware.db import ReposDB
 
+from github import Github
+from jenkins import Jenkins
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -15,6 +17,9 @@ def main(global_config, **settings):
     config.include("cornice")
 
     config.registry.settings['api_key'] = settings['api_key']
+
+    config.registry.settings['jenkins'] = Jenkins(settings['jenkins_url'], settings['jenkins_username'], settings['jenkins_password'])
+    config.registry.settings['github'] = Github(settings['github_token'])
 
     config.registry.settings['core'] = ReposDB(settings['core_repos_db'])
 
