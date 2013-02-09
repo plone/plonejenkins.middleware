@@ -4,10 +4,7 @@ from github import Github
 DEV_TEAM_ID = 14533
 
 
-class GithubConnection(object):
-
-    def __init__(self, username, password):
-        self.github = Github(username, password)
+class PloneGithub(Github):
 
     @property
     def organization(self):
