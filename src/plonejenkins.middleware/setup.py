@@ -38,7 +38,8 @@ setup(name='plonejenkins.middleware',
           # -*- Extra requirements: -*-
           'cornice',
           'configparser',
-          'gitpython'
+          'gitpython',
+          'python-dateutil'
       ],
       entry_points="""\
       [paste.app_factory]
