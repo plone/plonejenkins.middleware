@@ -40,7 +40,8 @@ setup(name='plonejenkins.middleware',
           'configparser',
           'gitpython',
           'python-dateutil',
-          'PyGithub'
+          'PyGithub',
+          'lxml'
       ],
       entry_points="""\
       [paste.app_factory]
