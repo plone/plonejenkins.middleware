@@ -58,36 +58,57 @@ def runFunctionPushTests(request):
     """
     payload = request.json_body
     repo_name = payload['repository']['full_name']
-    pull_id = payload['number']
-
-    github = request.registry.settings['github']
+    pull_number = payload['number']
+    pull_id = payload['pull_request']['id']
     package_name = payload['base']['name']
     merge_to_branch = payload['base']['ref']
+
+    github = request.registry.settings['github']
     repository = github.get_repo(repo_name)
-    pull = repository.get_pull(pull_id)
+    pull = repository.get_pull(pull_number)
+    committers = dict([(a.committer.id, a.committer) for a in pull.get_commits()]).values()
+
+    pull_request_message = """Domo arigato."""
 
     # Check local db for registered jobs
-    #   Is this the first time we've seen this pull request?
-    # Which branches use this branch?
-    for branch in COREDEV_BRANCHES_TO_CHECK:
-        core_buildout = PloneCoreBuildout(branch)
-        if core_buildout.get_package_branch(package_name) == merge_to_branch:
-            # Create a Jenkins job for each branch
-            pass
-    #   Post comment with Jenkins url(s)
-    #   
-    #
-    # Are there changes?
-    #   Run Jenkins job(s)
-    #
-    # Has the pull request been closed/merged?
-    #   Delete the Jenkins job(s)
-    #   Delete the db entry 
-    #
-    # Check all committers for Plone contributor rights
-    committers = dict([(a.committer.id, a.committer) for a in pull.get_commits()]).values()
-    # import pdb; pdb.set_trace( )
-    # pull.create_issue_comment('Domo arigato.')
+    pulls_db = request.registry.settings['pulls']
+    pull_info = pulls_db.get(pull_id)
+    # Is this the first time we've seen this pull request?
+    if pull_info is None:
+        # Check all committers for Plone contributor rights
+        for committer in committers:
+            if not github.is_core_contributor(committer.id):
+                # TODO: Post a message about commit access.
+                pass
+
+        # Which branches use this branch?
+        for branch in COREDEV_BRANCHES_TO_CHECK:
+            core_buildout = PloneCoreBuildout(branch)
+            if core_buildout.get_package_branch(package_name) == merge_to_branch:
+                # TODO: Create a Jenkins job for each branch
+                pass
+        # TODO: Post comment with Jenkins url(s)
+    else:
+        # Are there new committers?
+        checked_committers = pull_info.seen_committers
+        for committer in committers:
+            if committer.id not in checked_committers:
+                # Check all new committers for Plone contributor rights
+                if not github.is_core_contributor(committer.id):
+                    # TODO: Post a message about commit access.
+                    pass
+                checked_committers.append(committer.id)
+            pulls_db.set(pull_id, pull_info.jenkins_url, checked_committers)
+
+        # TODO: Are there changes?
+        #   TODO: Run Jenkins job(s)
+
+        # TODO: Has the pull request been closed/merged?
+        #   TODO: Delete the Jenkins job(s)
+        #   TODO: Delete the db entry
+
+    # Add a comment to the pull request.
+    pull.create_issue_comment(pull_request_message)
 
 
 
