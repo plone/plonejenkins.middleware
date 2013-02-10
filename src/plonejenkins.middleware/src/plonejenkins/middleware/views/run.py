@@ -56,6 +56,8 @@ def runFunctionPushTests(request):
     """
     When we are called by GH we want to run the jenkins core-dev builds
     """
+    add_log(request, "github", "Sent us a pull request.")
+
     payload = request.json_body
     repo_name = payload['repository']['full_name']
     pull_number = payload['number']
@@ -63,10 +65,10 @@ def runFunctionPushTests(request):
     package_name = payload['pull_request']['base']['repo']['name']
     target_branch = payload['pull_request']['base']['ref']
 
+    add_log(request, "mr.roboto", "Getting github repository.")
     github = request.registry.settings['github']
     repository = github.get_repo(repo_name)
     pull = repository.get_pull(pull_number)
-    committers = dict([(a.committer.id, a.committer) for a in pull.get_commits()]).values()
 
     pull_request_message = """Domo arigato."""
 
@@ -74,53 +76,61 @@ def runFunctionPushTests(request):
     pulls_db = request.registry.settings['pulls']
     pull_info = pulls_db.get(pull_id)
 
-    # TODO: pull request state = pull.state
+    pull_request_message = ""
 
-    # Is this the first time we've seen this pull request?
-    if pull_info is None:
-        # Check all committers for Plone contributor rights
-        for committer in committers:
-            if not github.is_core_contributor(committer.login):
-                # Post a message about commit access.
-                # committer.name, committer.login
-                msg = """@%s, it looks like you haven't signed \
-                        the Plone contributor agreement. You can find it at \
-                        https://buildoutcoredev.readthedocs.org/en/latest/agreement.html\
-                        . If you've already done so, let me know and I'll \
-                        double-check.""" % committer.login
-                pull_request_message += msg
+    # Check state of pull request ('open' or 'closed')
+    if pull.state == "open":
+        if pull_info is None:
+            # Consider this a new pull.
+            # Check to see which coredev branches (if any) use this package branch.
+            add_log(request, "mr.roboto", "Checking coredev branches.")
+            jenkins_urls = []
+            for branch in COREDEV_BRANCHES_TO_CHECK:
+                core_buildout = PloneCoreBuildout(branch)
+                if core_buildout.get_package_branch(package_name) == target_branch:
+                    # TODO: Create job
+                    # jenkins_urls.append(job_url)
+                    pass
+            if not jenkins_urls:
+                # Coredev doesn't use this package or branch. Ignore
+                return
 
+            pull_request_message += "Thanks for your pull request!\n"
+            # Add entry to db
+            pull_info = pulls_db.set(pull_id, jenkins_urls, [])
 
-        # Which branches use this branch?
-        for branch in COREDEV_BRANCHES_TO_CHECK:
-            core_buildout = PloneCoreBuildout(branch)
-            if core_buildout.get_package_branch(package_name) == target_branch:
-                # TODO: Create a Jenkins job for each branch
-                # TODO: Start Jenkins job(s)
-                pass
-        # TODO: Coredev doesn't use this at all?
-        # TODO: Post comment with Jenkins url(s)
-    else:
+        # Check contributors
+        committers = dict([(a.committer.id, a.committer) for a in pull.get_commits()]).values()
         # Are there new committers?
         checked_committers = pull_info.seen_committers
         for committer in committers:
-            if committer.id not in checked_committers:
+            if committer.login not in checked_committers:
+                add_log(request, "mr.roboto", "Checking contributor rights for %s." % committer.login)
                 # Check all new committers for Plone contributor rights
-                if not github.is_core_contributor(committer.id):
-                    # TODO: Post a message about commit access.
-                    pass
-                checked_committers.append(committer.id)
-            pulls_db.set(pull_id, pull_info.jenkins_url, checked_committers)
+                if not github.is_core_contributor(committer.login):
+                    msg = """@%s, it looks like you haven't signed \
+                            the Plone contributor agreement. You can find it at \
+                            https://buildoutcoredev.readthedocs.org/en/latest/agreement.html\
+                            . If you've already done so, let me know and I'll \
+                            double-check.\n""" % committer.login
+                pull_request_message += msg
 
-        # TODO: Are there changes?
-        #   TODO: Run Jenkins job(s)
+                checked_committers.append(committer.login)
+        pulls_db.set(pull_id, pull_info.jenkins_url, checked_committers)
 
-        # TODO: Has the pull request been closed/merged?
-        #   TODO: Delete the Jenkins job(s)
-        #   TODO: Delete the db entry
+        # TODO: Run jobs
+        
+        # Add a comment to the pull request.
+        print pull_request_message
+        pull.create_issue_comment(pull_request_message)
+    else:
+        if pull_info is not None:
+            # Consider this a merged pull
+            # TODO: Remove job from Jenkins
+            # TODO: Remove entry from db.
 
-    # Add a comment to the pull request.
-    pull.create_issue_comment(pull_request_message)
+            pass
+
 
 
 
