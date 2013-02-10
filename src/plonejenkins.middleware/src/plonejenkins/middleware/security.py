@@ -8,11 +8,10 @@ def validatejenkins(fn):
     def wrapped(request):
         # We check if the call is from jenkins server
         # import pdb; pdb.set_trace()
-        token = request.token
-        if token == request.registry.settings['api_key']:
+        if request.environ['REMOTE_ADDR'] == '127.0.0.1':
             return fn(request)
         else:
-            return {'success': False, 'message': 'Token not active'}
+            return {'success': False, 'message': 'Only for localhost'}
     return wrapped
 
 
