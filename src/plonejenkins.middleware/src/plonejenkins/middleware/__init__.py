@@ -24,7 +24,7 @@ def main(global_config, **settings):
     config.registry.settings['github'] = PloneGithub(settings['github_user'], settings['github_password'])
 
     config.registry.settings['core'] = ReposDB(settings['core_repos_db'])
-    config.registry.settings['pulls'] = ReposDB(settings['core_pulls_db'])
+    config.registry.settings['pulls'] = PullsDB(settings['core_pulls_db'])
 
     config.registry.settings['log_file'] = settings['log_file']
 
