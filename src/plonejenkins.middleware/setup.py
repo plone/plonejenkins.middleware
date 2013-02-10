@@ -41,7 +41,9 @@ setup(name='plonejenkins.middleware',
           'gitpython',
           'python-dateutil',
           'PyGithub',
-          'lxml'
+          'lxml',
+          'pyramid_mailer',
+          'WebTest',
       ],
       entry_points="""\
       [paste.app_factory]
