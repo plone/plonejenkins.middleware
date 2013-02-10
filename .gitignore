@@ -7,3 +7,4 @@ develop-eggs
 *.egg-info
 /.mr.developer.cfg
 /.installed.cfg
+production.ini

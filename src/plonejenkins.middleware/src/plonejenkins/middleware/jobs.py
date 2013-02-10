@@ -12,12 +12,18 @@ def create_jenkins_job_xml(displayname,
                            url_to_callback=None,
                            pull=None):
 
-    command = """${python} bootstrap.py
-bin/buildout -c ${buildout}
-merge pull the pull request
+    command = "%s bootstrap.py\n" % python_version
+    command += "bin/buildout -c %s" % buildout
 
-bin/jenkins-alltests -1
 
-    """
-    
-    result = render('plonejenkins.middleware:templates/plone.xml', {'':''})
+    command += "bin/jenkins-alltests -1"
+
+
+    result = render('plonejenkins.middleware:templates/plone.xml',
+        {'url_to_callback': url_to_callback,
+         'displayName': displayname,
+         'email_notification_recipients': email_notification_recipients,
+         'git_url': git_url,
+         'git_branch': git_branch})
+
+    return result
