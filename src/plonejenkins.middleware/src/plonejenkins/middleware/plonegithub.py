@@ -12,7 +12,7 @@ class PloneGithub(Github):
 
     @property
     def developer_team(self):
-        return self.get_team(DEV_TEAM_ID)
+        return self.organization.get_team(DEV_TEAM_ID)
 
     def is_core_contributor(self, user_id):
         user = self.get_user(user_id)
