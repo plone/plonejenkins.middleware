@@ -55,6 +55,7 @@ class PullsDB(object):
     def set(self, pull_id, jenkins_urls=[], seen_committers=[]):
         self._db[pull_id] = {'jenkins_urls': jenkins_urls, 'seen_committers': seen_committers}
         self.save()
+        return {'jenkins_urls': jenkins_urls, 'seen_committers': seen_committers}
 
     def delete(self, pull_id):
         del self._db[pull_id]
