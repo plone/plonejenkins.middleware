@@ -4,7 +4,10 @@ import StringIO
 
 
 def add_log(request, who, message):
-    print who + " " + message + str(datetime.now())
+    f = open(request.registry.settings['log_file'], 'w+')
+    m = who + " " + message + str(datetime.now()) + '\n'
+    f.write(m)
+    f.close()
 
 
 def jenkins_job(request, job, url_to_callback, params=None):
