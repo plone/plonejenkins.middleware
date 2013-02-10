@@ -73,6 +73,9 @@ def runFunctionPushTests(request):
     # Check local db for registered jobs
     pulls_db = request.registry.settings['pulls']
     pull_info = pulls_db.get(pull_id)
+
+    # TODO: pull request state = pull.state
+
     # Is this the first time we've seen this pull request?
     if pull_info is None:
         # Check all committers for Plone contributor rights
