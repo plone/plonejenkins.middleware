@@ -14,8 +14,8 @@ class PloneGithub(Github):
     def developer_team(self):
         return self.organization.get_team(DEV_TEAM_ID)
 
-    def is_core_contributor(self, user_id):
-        user = self.get_user(user_id)
+    def is_core_contributor(self, user_name):
+        user = self.get_user(user_name)
         return self.developer_team.has_in_members(user)
 
     def get_pull_request(self, pull_id):
