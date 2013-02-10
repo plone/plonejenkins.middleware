@@ -49,8 +49,8 @@ class PullsDB(object):
         f.write(json.dumps(self._db))
         f.close()
 
-    def get(self):
-        return self._db
+    def get(self, pull_id):
+        return self._db.get(pull_id)
 
     def set(self, pull_id, jenkins_url, seen_users):
         self._db[pull_id] = {'jenkins_url': jenkins_url, 'seen_committers': seen_committers}
