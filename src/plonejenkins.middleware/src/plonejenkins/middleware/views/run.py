@@ -85,8 +85,9 @@ def runFunctionPushTests(request):
                 # committer.name, committer.login
                 msg = """@%s, it looks like you haven't signed \
                         the Plone contributor agreement. You can find it at \
-                         . If you've already done so, let me know and I'll \
-                          double-check.""" % committer.login
+                        https://buildoutcoredev.readthedocs.org/en/latest/agreement.html\
+                        . If you've already done so, let me know and I'll \
+                        double-check.""" % committer.login
                 pull_request_message += msg
 
 
