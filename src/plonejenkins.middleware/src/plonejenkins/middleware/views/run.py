@@ -88,6 +88,7 @@ def runFunctionPushTests(request):
                 # TODO: Create a Jenkins job for each branch
                 # TODO: Start Jenkins job(s)
                 pass
+        # TODO: Coredev doesn't use this at all?
         # TODO: Post comment with Jenkins url(s)
     else:
         # Are there new committers?
