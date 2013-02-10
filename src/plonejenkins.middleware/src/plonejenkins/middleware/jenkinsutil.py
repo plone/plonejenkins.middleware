@@ -30,6 +30,8 @@ def jenkins_pull_job(request, pull_request, params=None):
         # upload to jenkins
         request.jenkins.create_job(ident, job_xml)
         request.jenkins.build_job(ident, params)
+    info = request.jenkins.get_job_info(ident)
+    return info.url
 
 
 def jenkins_job(request, job, url_to_callback, params=None):

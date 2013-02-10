@@ -11,4 +11,5 @@ merge pull the pull request
 bin/jenkins-alltests -1
 
     """
+    
     result = render('plonejenkins.middleware:templates/plone.xml', {'':''})
