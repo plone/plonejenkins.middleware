@@ -60,8 +60,8 @@ def runFunctionPushTests(request):
     repo_name = payload['repository']['full_name']
     pull_number = payload['number']
     pull_id = payload['pull_request']['id']
-    package_name = payload['base']['name']
-    target_branch = payload['base']['ref']
+    package_name = payload['pull_request']['base']['repo']['name']
+    target_branch = payload['pull_request']['base']['ref']
 
     github = request.registry.settings['github']
     repository = github.get_repo(repo_name)
