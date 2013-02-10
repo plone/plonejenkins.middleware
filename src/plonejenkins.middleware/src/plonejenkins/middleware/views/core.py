@@ -1,12 +1,9 @@
 # -*- encoding: utf-8 -*-
 """ Core repos services.
 """
-import os
-import binascii
 import json
 from webob import Response, exc
 from cornice import Service
-
 
 core = Service(name='core', path='/core', description="Core services")
 

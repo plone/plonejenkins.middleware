@@ -44,7 +44,6 @@ def runFunctionCoreTests(request):
     url = request.registry.settings['callback_url'] + 'corecommit?commit_hash=' + last_commit
 
     for job in jenkins_jobs:
-
         jenkins_job(request, job, url)
 
 
