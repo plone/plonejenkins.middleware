@@ -78,8 +78,14 @@ def runFunctionPushTests(request):
         # Check all committers for Plone contributor rights
         for committer in committers:
             if not github.is_core_contributor(committer.id):
-                # TODO: Post a message about commit access.
-                pass
+                # Post a message about commit access.
+                # committer.name, committer.login
+                msg = """@%s, it looks like you haven't signed \
+                        the Plone contributor agreement. You can find it at \
+                         . If you've already done so, let me know and I'll \
+                          double-check.""" % committer.login
+                pull_request_message += msg
+
 
         # Which branches use this branch?
         for branch in COREDEV_BRANCHES_TO_CHECK:
