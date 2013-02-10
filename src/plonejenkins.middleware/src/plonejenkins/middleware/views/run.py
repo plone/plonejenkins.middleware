@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 from cornice import Service
 from plonejenkins.middleware.security import validatetoken
-from plonejenkins.middleware.utils import add_log, jenkins_job
+from plonejenkins.middleware.jenkinsutil import jenkins_job, jenkins_pull_job, jenkins_remove_job
+from plonejenkins.middleware.utils import add_log
 from plonejenkins.middleware.buildout import PloneCoreBuildout
 
 import uuid
