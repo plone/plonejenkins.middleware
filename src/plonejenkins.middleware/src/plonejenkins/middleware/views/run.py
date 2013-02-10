@@ -80,7 +80,7 @@ def runFunctionPushTests(request):
     if pull_info is None:
         # Check all committers for Plone contributor rights
         for committer in committers:
-            if not github.is_core_contributor(committer.id):
+            if not github.is_core_contributor(committer.login):
                 # Post a message about commit access.
                 # committer.name, committer.login
                 msg = """@%s, it looks like you haven't signed \
