@@ -1,11 +1,14 @@
 from lxml import etree
 import StringIO
 
+
 def jenkins_remove_job(request, pull_request):
     """
     Remove the jenkins job from this pull request
     """
     # look for the jenkins job and remove it
+    ident = 'pull-request-' + pull_request
+    request.jenkins.delete_job(ident)
     pass
 
 
@@ -16,7 +19,7 @@ def jenkins_pull_job(request, pull_request, params=None):
     # We need to create the job with the checkout of the pull request
     ident = 'pull-request-' + pull_request
 
-    if request.jenkins.job_exists(job):
+    if request.jenkins.job_exists(ident):
         request.jenkins.build_job(ident, params)
 
     else:
