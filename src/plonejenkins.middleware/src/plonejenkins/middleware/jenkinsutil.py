@@ -1,5 +1,6 @@
 from lxml import etree
 import StringIO
+from plonejenkins.middleware.jobs import create_jenkins_job_xml
 
 
 def jenkins_remove_job(request, pull_request):
@@ -12,7 +13,7 @@ def jenkins_remove_job(request, pull_request):
     pass
 
 
-def jenkins_pull_job(request, pull_request, params=None):
+def jenkins_pull_job(request, pull_request, branch=None, params=None):
     """
     Pull requests jenkins job
     """
@@ -23,9 +24,14 @@ def jenkins_pull_job(request, pull_request, params=None):
         request.jenkins.build_job(ident, params)
 
     else:
-        job_xml = ''
         url_to_callback = request.registry.settings['callback_url'] + 'corepull?pull=' + ident
-        #job_xml = create_jenkins_job_xml(url_to_callback = url_to_callback, pull = ident)
+        job_xml = create_jenkins_job_xml(
+            'Pull Request ' + pull_request,
+            '2.7',
+            'no-reply@plone.org',
+            git_branch=branch,
+            url_to_callback=url_to_callback,
+            pull=ident)
         # create a callback
         # upload to jenkins
         request.jenkins.create_job(ident, job_xml)
