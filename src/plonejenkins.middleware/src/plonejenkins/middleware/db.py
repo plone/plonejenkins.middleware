@@ -31,3 +31,31 @@ class ReposDB(object):
         del self._db[egg]
         self.save()
 
+
+class PullsDB(object):
+
+    def __init__(self, filename):
+        self._filename = filename
+        f = open(filename, 'w+')
+        content = f.read()
+        if content != '':
+            self._db = json.loads(f.read())
+        else:
+            self._db = {}
+        f.close()
+
+    def save(self):
+        f = open(self._filename, 'w+')
+        f.write(json.dumps(self._db))
+        f.close()
+
+    def get(self):
+        return self._db
+
+    def set(self, pull_id, jenkins_url, seen_users):
+        self._db[pull_id] = {'jenkins_url': jenkins_url, 'seen_committers': seen_committers}
+        self.save()
+
+    def delete(self, pull_id):
+        del self._db[pull_id]
+        self.save()

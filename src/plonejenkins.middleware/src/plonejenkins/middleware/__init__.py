@@ -2,10 +2,11 @@ from pyramid.config import Configurator
 
 from security import RequestWithAttributes
 
-from plonejenkins.middleware.db import ReposDB
+from plonejenkins.middleware.db import ReposDB, PullsDB
 
 from plonejenkins.middleware.plonegithub import PloneGithub
 from jenkins import Jenkins
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -23,6 +24,7 @@ def main(global_config, **settings):
     config.registry.settings['github'] = PloneGithub(settings['github_user'], settings['github_password'])
 
     config.registry.settings['core'] = ReposDB(settings['core_repos_db'])
+    config.registry.settings['pulls'] = ReposDB(settings['core_pulls_db'])
 
     # adds cornice
     config.include("cornice")
