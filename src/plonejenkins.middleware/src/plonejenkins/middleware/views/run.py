@@ -61,7 +61,7 @@ def runFunctionPushTests(request):
     pull_number = payload['number']
     pull_id = payload['pull_request']['id']
     package_name = payload['base']['name']
-    merge_to_branch = payload['base']['ref']
+    target_branch = payload['base']['ref']
 
     github = request.registry.settings['github']
     repository = github.get_repo(repo_name)
@@ -84,8 +84,9 @@ def runFunctionPushTests(request):
         # Which branches use this branch?
         for branch in COREDEV_BRANCHES_TO_CHECK:
             core_buildout = PloneCoreBuildout(branch)
-            if core_buildout.get_package_branch(package_name) == merge_to_branch:
+            if core_buildout.get_package_branch(package_name) == target_branch:
                 # TODO: Create a Jenkins job for each branch
+                # TODO: Start Jenkins job(s)
                 pass
         # TODO: Post comment with Jenkins url(s)
     else:
