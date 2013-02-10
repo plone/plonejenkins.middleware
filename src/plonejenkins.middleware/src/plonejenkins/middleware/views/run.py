@@ -1,24 +1,22 @@
 # -*- encoding: utf-8 -*-
 from cornice import Service
 from plonejenkins.middleware.security import validatetoken
-from plonejenkins.middleware.jenkinsutil import jenkins_job, jenkins_pull_job, jenkins_remove_job
+from plonejenkins.middleware.jenkinsutil import jenkins_job
 from plonejenkins.middleware.utils import add_log
 from plonejenkins.middleware.buildout import PloneCoreBuildout
 
-import uuid
-import os
-import shutil
-import zipfile
-import urllib2
-import lxml
 
-from datetime import datetime
+runCoreTests = Service(
+    name='Run core tests',
+    path='/run/corecommit',
+    description="Run the core-dev buildout"
+)
 
-runCoreTests = Service(name='Run core tests', path='/run/corecommit',
-                    description="Run the core-dev buildout")
-
-runPushTests = Service(name='Run push tests', path='/run/pullrequest',
-                    description="Run the core-dev buildout with a pull request")
+runPushTests = Service(
+    name='Run push tests',
+    path='/run/pullrequest',
+    description="Run the core-dev buildout with a pull request"
+)
 
 
 jenkins_jobs = ['plone-4.3', 'plone-4.2']
@@ -83,7 +81,8 @@ def runFunctionPushTests(request):
     if pull.state == "open":
         if pull_info is None:
             # Consider this a new pull.
-            # Check to see which coredev branches (if any) use this package branch.
+            # Check to see which coredev branches (if any) use this package
+            # branch.
             add_log(request, "mr.roboto", "Checking coredev branches.")
             jenkins_urls = []
             for branch in COREDEV_BRANCHES_TO_CHECK:
@@ -120,7 +119,7 @@ def runFunctionPushTests(request):
         pulls_db.set(pull_id, pull_info.jenkins_url, checked_committers)
 
         # TODO: Run jobs
-        
+
         # Add a comment to the pull request.
         print pull_request_message
         pull.create_issue_comment(pull_request_message)
